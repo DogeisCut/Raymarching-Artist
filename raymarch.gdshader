@@ -156,11 +156,16 @@ vec3 op_bend(vec3 p, float k)
 float GetDist(vec3 p){
 	vec3 boxPos = p-vec3(5,2,5);
 	boxPos.xz *= op_rotate(TIME);
+	vec3 torusPos = p;
+	torusPos.yz *= op_rotate(TIME);
+	torusPos.xz *= op_rotate(TIME*1.363232);
+	torusPos.y -= TIME*10.0;
 	//boxPos = op_twist(boxPos, 0.25);
-	return union(smoothUnion(union(smoothUnion(sdSphere(p-vec3(0,1,0), 1), sdSphere(p-vec3(1,2,1), 1), 1),
+	return sdTorus(op_repeat(torusPos, vec3(5,5,5))-vec3(0,0,0), vec2(1,0.5));
+	/*return union(smoothUnion(union(smoothUnion(sdSphere(p-vec3(0,1,0), 1), sdSphere(p-vec3(1,2,1), 1), 1),
 			sdPlane(p,vec3(0,1,0),0)),
 			sdBox(boxPos, vec3(2,2,2)), 2),
-			sdBox(op_twist(p-vec3(-4,2,-4),cos(TIME)), vec3(2,2,2))); 
+			sdBox(op_twist(p-vec3(-4,2,-4),cos(TIME)), vec3(2,2,2))); */
 }
 
 vec3 GetNormal(vec3 p){
@@ -222,7 +227,7 @@ void fragment() {
 	//vec3 n = GetNormal(ro + rd * d);
 	//vec3 lightDir = normalize(vec3(-3,3,3) - (ro + rd * d));
 	//float shadow = softshadow(ro + rd * d, lightDir, 0.01, 30.0, 0.1);
-	// Lambertian shading
+	//// // Lambertian shading
 	//float diffuse = max(dot(n, lightDir), 0.0);
 	//ALBEDO = vec3(diffuse) * shadow; //shadow
 	

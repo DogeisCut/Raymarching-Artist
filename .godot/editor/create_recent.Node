@@ -1,2 +1,7 @@
+SubViewport
+TextureRect
+Control
+CanvasLayer
+WorldEnvironment
 Camera3D
 MeshInstance3D
