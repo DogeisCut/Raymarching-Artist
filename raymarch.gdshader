@@ -35,6 +35,8 @@ float smoothIntersection(float d1, float d2, float k){
 	return mix(d2, d1, h) + k*h*(1.0-h);
 }
 
+// **** Primatives ****
+
 float sdSphere(vec3 p, float r){
 	return length(p) - r;
 }
@@ -124,9 +126,40 @@ float sdEllipsoid(vec3 p, vec3 r)
     return k0 * (k0 - 1.0) / k1;
 }
 
+// **** Operations ****
+
+mat2 op_rotate(float a) {
+	float s = sin(a);
+	float c = cos(a);
+	return mat2(vec2(c, -s), vec2(s, c));
+}
+vec3 op_repeat(vec3 p, vec3 c) {
+	return mod(p, c) - 0.5 * c;
+}
+vec3 op_twist(vec3 p, float k)
+{
+	float c = cos(k * p.y);
+	float s = sin(k * p.y);
+	mat2  m = mat2(vec2(c, -s), vec2(s, c));
+	return vec3(m*p.xz, p.y);
+}
+vec3 op_bend(vec3 p, float k)
+{
+	float c = cos(k * p.x);
+	float s = sin(k * p.x);
+	mat2  m = mat2(vec2(c, -s), vec2(s, c));
+	return vec3(m*p.xy, p.z);
+}
+
+// **** The Scene SDF ****
+
 float GetDist(vec3 p){
-	return union(smoothUnion(sdSphere(p-vec3(0,1,0), 1), sdSphere(p-vec3(1,2,1), 1), 1),
-			sdPlane(p,vec3(0,1,0),0)); 
+	vec3 boxPos = p-vec3(5,2,5);
+	boxPos.xz *= op_rotate(TIME);
+	//boxPos = op_twist(boxPos, 0.25);
+	return union(union(smoothUnion(sdSphere(p-vec3(0,1,0), 1), sdSphere(p-vec3(1,2,1), 1), 1),
+			sdPlane(p,vec3(0,1,0),0)),
+			sdBox(boxPos, vec3(2,2,2))); 
 }
 
 vec3 GetNormal(vec3 p){
@@ -163,6 +196,18 @@ float softshadow( in vec3 ro, in vec3 rd, float mint, float maxt, float w )
     }
     res = max(res,-1.0);
     return 0.25*(1.0+res)*(1.0+res)*(2.0-res);
+}
+
+float hardshadow(in vec3 ro, in vec3 rd, float mint, float maxt, float epsilon) {
+    float t = mint;
+    for (int i = 0; i < 256 && t < maxt; i++) {
+        float h = RayMarch(ro + rd * t, rd);
+        if (h < epsilon) {
+            return 0.0; // Shadowed
+        }
+        t += h;
+    }
+    return 1.0; // Not shadowed
 }
 
 void fragment() {
