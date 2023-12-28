@@ -165,7 +165,7 @@ float GetDist(vec3 p){
 
 vec3 GetNormal(vec3 p){
 	float d = GetDist(p);
-	vec2 e = vec2(0.01, 0.0);
+	vec2 e = vec2(SURF_DIST, 0.0);
 	vec3 n = d - vec3(
 		GetDist(p-e.xyy),
 		GetDist(p-e.yxy),
