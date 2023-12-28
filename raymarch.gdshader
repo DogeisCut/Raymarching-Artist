@@ -157,9 +157,9 @@ float GetDist(vec3 p){
 	vec3 boxPos = p-vec3(5,2,5);
 	boxPos.xz *= op_rotate(TIME);
 	//boxPos = op_twist(boxPos, 0.25);
-	return union(union(union(smoothUnion(sdSphere(p-vec3(0,1,0), 1), sdSphere(p-vec3(1,2,1), 1), 1),
+	return union(smoothUnion(union(smoothUnion(sdSphere(p-vec3(0,1,0), 1), sdSphere(p-vec3(1,2,1), 1), 1),
 			sdPlane(p,vec3(0,1,0),0)),
-			sdBox(boxPos, vec3(2,2,2))),
+			sdBox(boxPos, vec3(2,2,2)), 2),
 			sdBox(op_twist(p-vec3(-4,2,-4),cos(TIME)), vec3(2,2,2))); 
 }
 
@@ -219,13 +219,13 @@ void fragment() {
 	
 	float d = RayMarch(ro, rd);
 	
-	vec3 n = GetNormal(ro + rd * d);
-	vec3 lightDir = normalize(vec3(-3,3,3) - (ro + rd * d));
-	float shadow = softshadow(ro + rd * d, lightDir, 0.01, 30.0, 0.1);
+	//vec3 n = GetNormal(ro + rd * d);
+	//vec3 lightDir = normalize(vec3(-3,3,3) - (ro + rd * d));
+	//float shadow = softshadow(ro + rd * d, lightDir, 0.01, 30.0, 0.1);
 	// Lambertian shading
-	float diffuse = max(dot(n, lightDir), 0.0);
-	ALBEDO = vec3(diffuse) * shadow; //shadow
+	//float diffuse = max(dot(n, lightDir), 0.0);
+	//ALBEDO = vec3(diffuse) * shadow; //shadow
 	
-	//n = GetNormal(ro + rd * d);
-	//ALBEDO = n;
+	vec3 n = GetNormal(ro + rd * d);
+	ALBEDO = n;
 }
