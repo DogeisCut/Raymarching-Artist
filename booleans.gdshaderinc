@@ -82,13 +82,13 @@ Surface paint(Surface s1, Surface s2) {
 
 Surface smoothPaint(Surface s1, Surface s2, float k) {
 	Surface result;
-	float transition = smoothstep(-k, k, s1.signedDistanceValue);
+	float h = clamp(0.5 + 0.5 * (s1.signedDistanceValue - s2.signedDistanceValue) / k, 0.0, 1.0);
 	
 	result.signedDistanceValue = s2.signedDistanceValue;
-	result.color = mix(s2.color, s1.color, transition);
-	result.roughness = mix(s2.roughness, s1.roughness, transition);
-	result.metallicity = mix(s2.metallicity, s1.metallicity, transition);
-	result.emission = mix(s2.emission, s1.emission, transition);
+	result.color = mix(s1.color, s2.color, h);
+	result.roughness = mix(s1.roughness, s2.roughness, h);
+	result.metallicity = mix(s1.metallicity, s2.metallicity, h);
+	result.emission = mix(s1.emission, s2.emission, h);
 	
 	return result;
 }
