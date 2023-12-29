@@ -4,6 +4,7 @@ render_mode unshaded, depth_test_disabled;
 uniform int MAX_STEPS = 100;
 uniform float MAX_DIST = 100.0;
 uniform float SURF_DIST = 0.001;
+uniform vec3 LIGHT_POS = vec3(-3,10,3);
 
 uniform sampler2D DEPTH_TEXTURE : hint_depth_texture, filter_linear_mipmap;
 
@@ -107,13 +108,13 @@ void fragment() {
 	
 	float dist = rayMarch(cameraPositionWorld, rayDirection);
 	
-	// vec3 normal = getNormal(cameraPositionWorld + rayDirection * dist);
-	// vec3 lightDirection = normalize(vec3(-3,3,3) - (cameraPositionWorld + rayDirection * dist));
-	// float shadow = softShadow(cameraPositionWorld + rayDirection * dist, lightDirection, 0.01, 30.0, 0.1);
-	// // Lambertian shading
-	// float diffuse = max(dot(normal, lightDirection), 0.0);
-	// ALBEDO = vec3(diffuse) * shadow; //shadow
+	 vec3 normal = getNormal(cameraPositionWorld + rayDirection * dist);
+	 vec3 lightDirection = normalize(LIGHT_POS - (cameraPositionWorld + rayDirection * dist));
+	 float shadow = hardShadow(cameraPositionWorld + rayDirection * dist, lightDirection, 0.01, 30.0, 0.1);
+	 // Lambertian shading
+	 float diffuse = max(dot(normal, lightDirection), 0.0);
+	 ALBEDO = vec3(diffuse) * shadow; //shadow
 	
-	vec3 normal = getNormal(cameraPositionWorld + rayDirection * dist);
-	ALBEDO = normal;
+	//vec3 normal = getNormal(cameraPositionWorld + rayDirection * dist);
+	//ALBEDO = normal;
 }
