@@ -15,6 +15,7 @@ Surface smoothUnion(Surface s1, Surface s2, float k) {
 	result.color = mix(s2.color, s1.color, h);
 	result.roughness = mix(s2.roughness, s1.roughness, h);
 	result.metallicity = mix(s2.metallicity, s1.metallicity, h);
+	result.emission = mix(s2.emission, s1.emission, h);
 	
 	return result;
 }
@@ -26,6 +27,7 @@ Surface subtraction(Surface a, Surface b) {
 	result.color = b.color;  // Keep the color of the subtracted object
 	result.roughness = b.roughness;  // Keep the roughness of the subtracted object
 	result.metallicity = b.metallicity;  // Keep the metallicity of the subtracted object
+	result.emission = b.emission;  // Keep the emission of the subtracted object
 	return result;
 }
 
@@ -38,6 +40,7 @@ Surface smoothSubtraction(Surface s1, Surface s2, float k) {
 	result.color = s2.color;  // Keep the color of the subtracted object
 	result.roughness = s2.roughness;  // Keep the roughness of the subtracted object
 	result.metallicity = s2.metallicity;  // Keep the metallicity of the subtracted object
+	result.emission = s2.emission;  // Keep the metallicity of the subtracted object
 	
 	return result;
 }
@@ -49,6 +52,7 @@ Surface intersection(Surface a, Surface b) {
 	result.color = a.color;  // Keep the color of the intersected object
 	result.roughness = a.roughness;  // Keep the roughness of the intersected object
 	result.metallicity = a.metallicity;  // Keep the metallicity of the intersected object
+	result.emission = a.emission;  // Keep the emission of the intersected object
 	return result;
 }
 
@@ -60,6 +64,7 @@ Surface smoothIntersection(Surface s1, Surface s2, float k) {
 	result.color = mix(s2.color, s1.color, h);
 	result.roughness = mix(s2.roughness, s1.roughness, h);
 	result.metallicity = mix(s2.metallicity, s1.metallicity, h);
+	result.emission = mix(s2.emission, s1.emission, h);
 	
 	return result;
 }

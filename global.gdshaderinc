@@ -3,4 +3,5 @@ struct Surface {
 	vec3 color;
 	float roughness;
 	float metallicity;
+	float emission;
 };
