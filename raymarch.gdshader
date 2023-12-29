@@ -40,6 +40,8 @@ Surface sdScene(vec3 position) {
 	
 	scene = union(scene, Surface(sdBox(opTwist(position - vec3(-4,2,-4), cos(TIME)), vec3(2,2,2)), vec3(1,0,1),1.0,0.0,0.0));
 	
+	scene = paint(Surface(sdBox(position - vec3(-4.5,1,4.5), vec3(2,2,2)), vec3(1,0,1),1.0,0.0,0.0), scene);
+	
 	return scene;
 }
 
