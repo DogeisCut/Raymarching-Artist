@@ -9,44 +9,46 @@ uniform vec3 SUN_DIRECTION = vec3(0.6,1,0.6);
 
 uniform sampler2D DEPTH_TEXTURE : hint_depth_texture, filter_linear_mipmap;
 
+#include "res://global.gdshaderinc"
+
 #include "res://sdfs.gdshaderinc"
 #include "res://booleans.gdshaderinc"
 #include "res://operations.gdshaderinc"
 
 // **** The Scene SDF ****
 
-float getDist(vec3 position) {
+Surface sdScene(vec3 position) {
 	//vec3 torusPosition = position;
 	//torusPosition.yz *= opRotate(TIME);
 	//torusPosition.xz *= opRotate(TIME*1.363232);
 	//torusPosition.y -= TIME*10.0;
 	//boxPosition = opTwist(boxPosition, 0.25);
 	//return sdTorus(opRepeat(torusPosition, vec3(5,5,5))-vec3(0,0,0), vec2(1,0.5));
+	Surface scene;
+	
+	
+	scene = smoothUnion(Surface(sdSphere(position - vec3(0,1,0), 1),vec3(1,1,1),1.0,0.0),
+						Surface(sdSphere(position - vec3(1,2,1), 1), vec3(1,1,1),1.0,0.0),
+						1);
+	scene = union(scene, Surface(sdPlane(position, vec3(0,1,0), 0), vec3(1,1,1),1.0,0.0));
 	
 	vec3 boxPosition = position - vec3(5,2,5);
 	boxPosition.xz *= opRotate(TIME);
+	scene = smoothUnion(scene, Surface(sdBox(boxPosition, vec3(2,2,2)), vec3(1,0,0),1.0,0.0), 2);
 	
-	return union(
-		smoothUnion(
-			union(
-				smoothUnion(sdSphere(position - vec3(0,1,0), 1), sdSphere(position - vec3(1,2,1), 1), 1),
-				sdPlane(position, vec3(0,1,0), 0)
-			),
-			sdBox(boxPosition, vec3(2,2,2)),
-			2
-		),
-		sdBox(opTwist(position - vec3(-4,2,-4), cos(TIME)), vec3(2,2,2))
-	);
+	scene = union(scene, Surface(sdBox(opTwist(position - vec3(-4,2,-4), cos(TIME)), vec3(2,2,2)), vec3(1,1,1),1.0,0.0));
+	
+	return scene;
 }
 
 vec3 getNormal(vec3 point){
-	float distanceToPoint = getDist(point);
+	float distanceToPoint = sdScene(point).signedDistanceValue;
 	vec2 epsilon  = vec2(SURF_DIST, 0.0);
 	
 	vec3 normal = distanceToPoint - vec3(
-		getDist(point-epsilon.xyy),
-		getDist(point-epsilon.yxy),
-		getDist(point-epsilon.yyx));
+		sdScene(point-epsilon.xyy).signedDistanceValue,
+		sdScene(point-epsilon.yxy).signedDistanceValue,
+		sdScene(point-epsilon.yyx).signedDistanceValue);
 	return normalize(normal);
 }
 
@@ -55,7 +57,7 @@ float rayMarch(vec3 rayOrigin, vec3 rayDirection) {
 	
 	for(int step = 0; step < MAX_STEPS; step++) {
 		vec3 currentPoint = rayOrigin + rayDirection * distanceTravelled; // step along ray
-		float distanceToSurface = getDist(currentPoint) * 0.5;
+		float distanceToSurface = sdScene(currentPoint).signedDistanceValue * 0.5;
 		distanceTravelled += distanceToSurface;
 		
 		if(distanceTravelled > MAX_DIST || distanceToSurface < SURF_DIST)

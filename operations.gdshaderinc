@@ -1,3 +1,5 @@
+#include "res://global.gdshaderinc"
+
 // **** Operations ****
 
 mat2 opRotate(float a) {
