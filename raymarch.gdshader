@@ -121,11 +121,17 @@ void fragment() {
 	
 	//sun lighting
 	float dist = rayMarch(cameraPositionWorld, rayDirection);
-	vec3 normal = getNormal(cameraPositionWorld + rayDirection * dist);
-	vec3 lightDirection = normalize(SUN_DIRECTION);
-	float shadow = hardShadow(cameraPositionWorld + rayDirection * dist, lightDirection, 0.01, 30.0, 0.1);
-	float diffuse = max(dot(normal, lightDirection), 0.0);
-	ALBEDO = vec3(diffuse) * shadow; //shadow
+	if (dist > MAX_DIST) {
+		ALBEDO = vec3(0.835,1,1);
+	} else {
+		vec3 normal = getNormal(cameraPositionWorld + rayDirection * dist);
+		vec3 lightDirection = normalize(SUN_DIRECTION);
+		float shadow = hardShadow(cameraPositionWorld + rayDirection * dist, lightDirection, 0.01, 30.0, 0.1);
+		float diffuse = max(dot(normal, lightDirection), 0.0);
+		ALBEDO = vec3(diffuse) * shadow; //shadow
+		ALBEDO = mix(ALBEDO, vec3(0.835,1,1), dist/MAX_DIST); //ez fog lol
+	}
+	
 	
 	//vec3 normal = getNormal(cameraPositionWorld + rayDirection * dist);
 	//ALBEDO = normal;

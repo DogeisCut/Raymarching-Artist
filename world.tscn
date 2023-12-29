@@ -25,6 +25,7 @@ background_mode = 4
 mesh = SubResource("BoxMesh_ktkj5")
 
 [node name="Camera3D" type="Camera3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.77077, 7.19193)
 
 [node name="WorldEnvironment" type="WorldEnvironment" parent="."]
 environment = SubResource("Environment_0pfcu")
