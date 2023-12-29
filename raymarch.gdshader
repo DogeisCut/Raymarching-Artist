@@ -30,13 +30,15 @@ Surface sdScene(vec3 position) {
 	scene = smoothUnion(Surface(sdSphere(position - vec3(0,1,0), 1),vec3(0,1,0),1.0,0.0,0.0),
 						Surface(sdSphere(position - vec3(1,2,1), 1), vec3(0,0,1),1.0,0.0,0.0),
 						1);
-	scene = union(scene, Surface(sdPlane(position, vec3(0,1,0), 0), vec3(1,1,1),1.0,0.0,0.0));
+	
+	vec3 floorColor = vec3(1. + 0.7*mod(floor(position.x) + floor(position.z), 2.0));
+	scene = union(scene, Surface(sdPlane(position, vec3(0,1,0), 0), floorColor,1.0,0.0,0.0));
 	
 	vec3 boxPosition = position - vec3(5,2,5);
 	boxPosition.xz *= opRotate(TIME);
 	scene = smoothUnion(scene, Surface(sdBox(boxPosition, vec3(2,2,2)), vec3(1,0,0),1.0,0.0,0.0), 2);
 	
-	scene = union(scene, Surface(sdBox(opTwist(position - vec3(-4,2,-4), cos(TIME)), vec3(2,2,2)), vec3(1,1,1),1.0,0.0,0.0));
+	scene = union(scene, Surface(sdBox(opTwist(position - vec3(-4,2,-4), cos(TIME)), vec3(2,2,2)), vec3(1,0,1),1.0,0.0,0.0));
 	
 	return scene;
 }
