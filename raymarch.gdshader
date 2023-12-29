@@ -53,7 +53,7 @@ float rayMarch(vec3 rayOrigin, vec3 rayDirection) {
 	
 	for(int step = 0; step < MAX_STEPS; step++) {
 		vec3 currentPoint = rayOrigin + rayDirection * distanceTravelled; // step along ray
-		float distanceToSurface = getDist(currentPoint);
+		float distanceToSurface = getDist(currentPoint) * 0.5;
 		distanceTravelled += distanceToSurface;
 		
 		if(distanceTravelled > MAX_DIST || distanceToSurface < SURF_DIST)
