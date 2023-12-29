@@ -1,9 +1,9 @@
 shader_type spatial;
 render_mode unshaded, depth_test_disabled;
 
-uniform int MAX_STEPS = 1000;
-uniform float MAX_DIST = 1000.0;
-uniform float SURF_DIST = 0.0001;
+uniform int MAX_STEPS = 100;
+uniform float MAX_DIST = 100.0;
+uniform float SURF_DIST = 0.001;
 
 uniform sampler2D DEPTH_TEXTURE : hint_depth_texture, filter_linear_mipmap;
 

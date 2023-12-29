@@ -5,9 +5,9 @@
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_74nd4"]
 render_priority = 0
 shader = ExtResource("1_uc5hq")
-shader_parameter/MAX_STEPS = 1000
-shader_parameter/MAX_DIST = 1000.0
-shader_parameter/SURF_DIST = 0.0001
+shader_parameter/MAX_STEPS = 100
+shader_parameter/MAX_DIST = 100.0
+shader_parameter/SURF_DIST = 0.001
 
 [sub_resource type="BoxMesh" id="BoxMesh_ktkj5"]
 material = SubResource("ShaderMaterial_74nd4")
