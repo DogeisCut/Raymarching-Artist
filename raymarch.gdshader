@@ -108,12 +108,27 @@ void fragment() {
 	
 	float dist = rayMarch(cameraPositionWorld, rayDirection);
 	
-	 vec3 normal = getNormal(cameraPositionWorld + rayDirection * dist);
-	 vec3 lightDirection = normalize(LIGHT_POS - (cameraPositionWorld + rayDirection * dist));
-	 float shadow = hardShadow(cameraPositionWorld + rayDirection * dist, lightDirection, 0.01, 30.0, 0.1);
-	 // Lambertian shading
-	 float diffuse = max(dot(normal, lightDirection), 0.0);
-	 ALBEDO = vec3(diffuse) * shadow; //shadow
+	vec3 normal = getNormal(cameraPositionWorld + rayDirection * dist);
+	vec3 lightDirection = normalize(LIGHT_POS - (cameraPositionWorld + rayDirection * dist));
+	float shadow = hardShadow(cameraPositionWorld + rayDirection * dist, lightDirection, 0.01, 30.0, 0.1);
+	// Lambertian shading
+	float diffuse = max(dot(normal, lightDirection), 0.0);
+	vec2 pixel_uv_thing = SCREEN_UV * VIEWPORT_SIZE;
+	if (mod(pixel_uv_thing.x + pixel_uv_thing.y, 100.0) < 50.0) {
+		if (diffuse < 0.25) {
+			diffuse *= mix(0.9, 1.0, diffuse * 4.0);
+			if (diffuse <= 0.1) diffuse += mix(0.001, 0.0, diffuse * 10.0);
+		}
+		if (shadow < 0.25)
+			shadow = clamp(shadow, 0.8, 1);
+	}
+	if (distance(mod(pixel_uv_thing, vec2(10.0)) - vec2(5.0), vec2(0)) < 4.0) {
+		if (diffuse > 0.75) {
+			diffuse *= mix(1.0, 0.9, (diffuse - 0.75) * 4.0);
+		}
+	}
+	shadow = clamp(shadow, 0.75, 1);
+	ALBEDO = vec3(diffuse) * shadow; //shadow
 	
 	//vec3 normal = getNormal(cameraPositionWorld + rayDirection * dist);
 	//ALBEDO = normal;
