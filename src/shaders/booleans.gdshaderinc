@@ -1,4 +1,4 @@
-#include "res://global.gdshaderinc"
+#include "res://src/shaders/global.gdshaderinc"
 
 // **** Booleans/CSG Operations ****
 Surface union(Surface a, Surface b){

@@ -1,19 +1,19 @@
 shader_type spatial;
-render_mode unshaded, depth_test_disabled;
+render_mode unshaded;
 
 uniform int MAX_STEPS = 100;
 uniform float MAX_DIST = 100.0;
 uniform float SURF_DIST = 0.001;
 uniform vec3 LIGHT_POS = vec3(-3,10,3);
-uniform vec3 SUN_DIRECTION = vec3(-0.6,1,0.6);
+uniform vec3 SUN_DIRECTION = vec3(-0.5,1,0.6);
 
 uniform sampler2D DEPTH_TEXTURE : hint_depth_texture, filter_linear_mipmap;
 
-#include "res://global.gdshaderinc"
+#include "res://src/shaders/global.gdshaderinc"
 
-#include "res://sdfs.gdshaderinc"
-#include "res://booleans.gdshaderinc"
-#include "res://operations.gdshaderinc"
+#include "res://src/shaders/sdfs.gdshaderinc"
+#include "res://src/shaders/booleans.gdshaderinc"
+#include "res://src/shaders/operations.gdshaderinc"
 
 // **** The Scene SDF ****
 
@@ -40,7 +40,7 @@ Surface sdScene(vec3 position) {
 	
 	scene = union(scene, Surface(sdBox(opTwist(position - vec3(-4,2,-4), cos(TIME)), vec3(2,2,2)), vec3(1,0,1),1.0,0.0,0.0));
 	
-	scene = paint(Surface(sdBox(position - vec3(-4.5,1,4.5), vec3(2,2,2)), vec3(1,0,1),1.0,0.0,0.0), scene);
+	scene = paint(Surface(sdBox(position - vec3(-4.5,1,4.5), vec3(2,2,2)), vec3(1,0.5,0),1.0,0.0,0.0), scene);
 	
 	return scene;
 }

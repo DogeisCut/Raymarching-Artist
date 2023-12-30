@@ -1,6 +1,6 @@
 [gd_scene load_steps=5 format=3 uid="uid://3ipjasbqfhje"]
 
-[ext_resource type="Shader" path="res://raymarch.gdshader" id="1_uc5hq"]
+[ext_resource type="Shader" path="res://src/shaders/raymarch.gdshader" id="1_uc5hq"]
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_74nd4"]
 render_priority = 0
@@ -9,7 +9,7 @@ shader_parameter/MAX_STEPS = 100
 shader_parameter/MAX_DIST = 100.0
 shader_parameter/SURF_DIST = 0.001
 shader_parameter/LIGHT_POS = Vector3(-3, 10, 3)
-shader_parameter/SUN_DIRECTION = Vector3(-0.6, 1, 0.6)
+shader_parameter/SUN_DIRECTION = Vector3(-0.5, 1, 0.6)
 
 [sub_resource type="BoxMesh" id="BoxMesh_ktkj5"]
 material = SubResource("ShaderMaterial_74nd4")

@@ -1,4 +1,4 @@
-#include "res://global.gdshaderinc"
+#include "res://src/shaders/global.gdshaderinc"
 
 // **** Operations ****
 
