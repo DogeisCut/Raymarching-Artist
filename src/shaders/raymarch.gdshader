@@ -6,7 +6,7 @@ uniform float MAX_DIST = 100.0;
 uniform float SURF_DIST = 0.001;
 uniform vec3 LIGHT_POS = vec3(-3,10,3);
 uniform vec3 SUN_DIRECTION = vec3(-0.5,1,0.6);
-uniform float AO_APPLIES_FROM = 0.5;
+uniform float AO_APPLIES_FROM: hint_range(-1.0, 1.0) = 0.5;
 
 uniform sampler2D DEPTH_TEXTURE : hint_depth_texture, filter_linear_mipmap;
 
