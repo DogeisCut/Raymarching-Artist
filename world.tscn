@@ -10,6 +10,7 @@ shader_parameter/MAX_DIST = 100.0
 shader_parameter/SURF_DIST = 0.001
 shader_parameter/LIGHT_POS = Vector3(-3, 10, 3)
 shader_parameter/SUN_DIRECTION = Vector3(-0.5, 1, 0.6)
+shader_parameter/AO_APPLIES_FROM = 0.5
 
 [sub_resource type="BoxMesh" id="BoxMesh_ktkj5"]
 material = SubResource("ShaderMaterial_74nd4")

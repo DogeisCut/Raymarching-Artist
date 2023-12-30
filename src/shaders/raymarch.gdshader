@@ -6,6 +6,7 @@ uniform float MAX_DIST = 100.0;
 uniform float SURF_DIST = 0.001;
 uniform vec3 LIGHT_POS = vec3(-3,10,3);
 uniform vec3 SUN_DIRECTION = vec3(-0.5,1,0.6);
+uniform float AO_APPLIES_FROM = 0.5;
 
 uniform sampler2D DEPTH_TEXTURE : hint_depth_texture, filter_linear_mipmap;
 
@@ -27,20 +28,22 @@ Surface sdScene(vec3 position) {
 	Surface scene;
 	
 	
-	scene = smoothUnion(Surface(sdSphere(position - vec3(0,1,0), 1),vec3(0,1,0),1.0,0.0,0.0),
-						Surface(sdSphere(position - vec3(1,2,1), 1), vec3(0,0,1),1.0,0.0,0.0),
-						1);
+	scene = smoothUnion(
+		new_surface(sdSphere(position - vec3(0,1,0), 1), vec3(0,1,0),1.0,0.0,0.0),
+		new_surface(sdSphere(position - vec3(1,2,1), 1), vec3(0,0,1),1.0,0.0,0.0),
+		1
+	);
 	
 	vec3 floorColor = vec3(1. + 0.7*mod(floor(position.x) + floor(position.z), 2.0));
-	scene = union(scene, Surface(sdPlane(position, vec3(0,1,0), 0), floorColor,1.0,0.0,0.0));
+	scene = union(scene, new_surface(sdPlane(position, vec3(0,1,0), 0), floorColor,1.0,0.0,0.0));
 	
 	vec3 boxPosition = position - vec3(5,2,5);
 	boxPosition.xz *= opRotate(TIME);
-	scene = smoothUnion(scene, Surface(sdBox(boxPosition, vec3(2,2,2)), vec3(1,0,0),1.0,0.0,0.0), 2);
+	scene = smoothUnion(scene, new_surface(sdBox(boxPosition, vec3(2,2,2)), vec3(1,0,0),1.0,0.0,0.0), 2);
 	
-	scene = union(scene, Surface(sdBox(opTwist(position - vec3(-4,2,-4), cos(TIME)), vec3(2,2,2)), vec3(1,0,1),1.0,0.0,0.0));
+	scene = union(scene, new_surface(sdBox(opTwist(position - vec3(-4,2,-4), cos(TIME)), vec3(2,2,2)), vec3(1,0,1),1.0,0.0,0.0));
 	
-	scene = paint(Surface(sdBox(position - vec3(-4.5,1,4.5), vec3(2,2,2)), vec3(1,0.5,0),1.0,0.0,0.0), scene);
+	scene = paint(new_surface(sdBox(position - vec3(-4.5,1,4.5), vec3(2,2,2)), vec3(1,0.5,0),1.0,0.0,0.0), scene);
 	
 	return scene;
 }
@@ -60,7 +63,8 @@ Surface rayMarch(vec3 rayOrigin, vec3 rayDirection) {
 	float distanceTravelled = 0.0; // distanceTravelled = current distance
 	Surface closestObject;
 	
-	for(int step = 0; step < MAX_STEPS; step++) {
+	int step = 0;
+	for(; step < MAX_STEPS; step++) {
 		vec3 currentPoint = rayOrigin + rayDirection * distanceTravelled; // step along ray
 		closestObject = sdScene(currentPoint);
 		distanceTravelled += closestObject.signedDistanceValue * 0.5;
@@ -68,6 +72,7 @@ Surface rayMarch(vec3 rayOrigin, vec3 rayDirection) {
 	}
 	
 	closestObject.signedDistanceValue = distanceTravelled;
+	closestObject.marches = step;
 	
 	return closestObject;
 }
@@ -107,6 +112,24 @@ float hardShadow(in vec3 rayOrigin, in vec3 rayDirection, float minDistance, flo
 	return 1.0; // Not shadowed
 }
 
+float ambientOcclusion(int marches) {
+	float F_MAX_STEPS = float(MAX_STEPS);
+	float STEP_FRACT = F_MAX_STEPS * AO_APPLIES_FROM;
+	return clamp(
+		1.0 - (
+			(
+				clamp(
+					float(marches),
+					STEP_FRACT,
+					F_MAX_STEPS
+				) - STEP_FRACT
+			) / F_MAX_STEPS
+		),
+		0.0,
+		1.0
+	);
+}
+
 // **** Fragment ****
 
 void fragment() {
@@ -133,7 +156,7 @@ void fragment() {
 		vec3 lightDirection = normalize(SUN_DIRECTION);
 		float shadow = hardShadow(cameraPositionWorld + rayDirection * dist.signedDistanceValue, lightDirection, 0.01, 30.0, 0.1);
 		float diffuse = max(dot(normal, lightDirection), 0.0);
-		ALBEDO = vec3(diffuse*dist.color) * shadow; //shadow
+		ALBEDO = vec3(diffuse*dist.color) * shadow * ambientOcclusion(dist.marches); //shadow
 		ALBEDO = mix(ALBEDO, vec3(0.835,1,1), dist.signedDistanceValue/MAX_DIST); //ez fog lol
 	}
 	
