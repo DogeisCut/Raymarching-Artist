@@ -5,8 +5,8 @@
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_74nd4"]
 render_priority = 0
 shader = ExtResource("1_uc5hq")
-shader_parameter/MAX_STEPS = 100
-shader_parameter/MAX_DIST = 100.0
+shader_parameter/MAX_STEPS = 1000
+shader_parameter/MAX_DIST = 200.0
 shader_parameter/SURF_DIST = 0.001
 shader_parameter/LIGHT_POS = Vector3(-3, 10, 3)
 shader_parameter/SUN_DIRECTION = Vector3(-0.5, 1, 0.6)

@@ -1,8 +1,8 @@
 shader_type spatial;
 render_mode unshaded;
 
-uniform int MAX_STEPS = 100;
-uniform float MAX_DIST = 100.0;
+uniform int MAX_STEPS = 1000;
+uniform float MAX_DIST = 200.0;
 uniform float SURF_DIST = 0.001;
 uniform vec3 LIGHT_POS = vec3(-3,10,3);
 uniform vec3 SUN_DIRECTION = vec3(-0.5,1,0.6);
@@ -43,14 +43,14 @@ Surface sdScene(vec3 position) {
 	
 	scene = union(scene, new_surface(sdBox(opTwist(position - vec3(-4,2,-4), cos(TIME)), vec3(2,2,2)), vec3(1,0,1),1.0,0.0,0.0));
 	
-	scene = paint(new_surface(sdBox(position - vec3(-4.5,1,4.5), vec3(2,2,2)), vec3(1,0.5,0),1.0,0.0,0.0), scene);
+	scene = paint(new_surface(sdBox((position - vec3(-4.5,1,4.5)), vec3(2,2,2)), vec3(1,0.5,0),1.0,0.0,0.0), scene);
 	
 	return scene;
 }
 
 vec3 getNormal(vec3 point){
 	float distanceToPoint = sdScene(point).signedDistanceValue;
-	vec2 epsilon  = vec2(SURF_DIST, 0.0);
+	vec2 epsilon  = vec2(SURF_DIST/10.0, 0.0);
 	
 	vec3 normal = distanceToPoint - vec3(
 		sdScene(point-epsilon.xyy).signedDistanceValue,
@@ -68,7 +68,7 @@ Surface rayMarch(vec3 rayOrigin, vec3 rayDirection) {
 		vec3 currentPoint = rayOrigin + rayDirection * distanceTravelled; // step along ray
 		closestObject = sdScene(currentPoint);
 		distanceTravelled += closestObject.signedDistanceValue * 0.5;
-		if(distanceTravelled > MAX_DIST || closestObject.signedDistanceValue < SURF_DIST) break;
+		if(distanceTravelled > MAX_DIST || closestObject.signedDistanceValue < SURF_DIST/10.0) break;
 	}
 	
 	closestObject.signedDistanceValue = distanceTravelled;
